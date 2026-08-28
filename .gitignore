@@ -57,9 +57,10 @@ target/
 
 __pycache__/
 /softdevice/
+dist/
 
 dc_mini_metadata.json
 .rustc_info.json
 *.edf
 *.dat
-
+*.zip

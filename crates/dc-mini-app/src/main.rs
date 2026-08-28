@@ -186,11 +186,15 @@ async fn main(spawner: Spawner) {
         .set_ldsw1_gpio_control(Gpio::None, GpioPolarity::NotInverted)
         .await
         .unwrap();
+    let status = npm1300.get_ldsw_status().await.unwrap();
+    info!("LDSW status after set_ldsw1_gpio_control: {:?}", status);
     Timer::after_millis(200).await;
     npm1300
         .set_ldsw2_gpio_control(Gpio::None, GpioPolarity::NotInverted)
         .await
         .unwrap();
+    let status = npm1300.get_ldsw_status().await.unwrap();
+    info!("LDSW status after set_ldsw2_gpio_control: {:?}", status);
     Timer::after_millis(200).await;
 
     info!("Check Status...");
@@ -202,26 +206,38 @@ async fn main(spawner: Spawner) {
 
     info!("Configuring LDSW1 as Load Switch");
     let _ = npm1300.set_ldsw1_mode(Ldsw1Ldosel::Ldsw).await;
+    let status = npm1300.get_ldsw_status().await.unwrap();
+    info!("LDSW status after set_ldsw1_mode(Ldsw): {:?}", status);
     let _ = npm1300
         .configure_ldsw1_soft_start(
             Ldsw1Softstartdisable::Noeffect,
             Ldsw1Softstartsel::Ma50,
         )
         .await;
+    let status = npm1300.get_ldsw_status().await.unwrap();
+    info!("LDSW status after configure_ldsw1_soft_start: {:?}", status);
 
     // Enable LDSW1
     info!("Pre-charging analog frontend...");
     let _ = npm1300.enable_ldsw1().await;
+    let status = npm1300.get_ldsw_status().await.unwrap();
+    info!("LDSW status after enable_ldsw1: {:?}", status);
 
     Timer::after_millis(500).await;
+    let status = npm1300.get_ldsw_status().await.unwrap();
+    info!("LDSW status after pre-charge delay: {:?}", status);
 
     info!("Switching LDSW1 to LDO with 3.3V output...");
     // Set LDO1 output voltage to 3.3V
     let _ = npm1300.set_ldsw1_ldo_voltage(LdoVoltage::V3_3).await;
     info!("After set_ldsw1_ldo_voltage...");
+    let status = npm1300.get_ldsw_status().await.unwrap();
+    info!("LDSW status after set_ldsw1_ldo_voltage(V3_3): {:?}", status);
     // Configure LDSW1 as LDO mode
     let _ = npm1300.set_ldsw1_mode(Ldsw1Ldosel::Ldo).await;
     info!("After set_ldsw1_mode...");
+    let status = npm1300.get_ldsw_status().await.unwrap();
+    info!("LDSW status after set_ldsw1_mode(Ldo): {:?}", status);
 
     info!("Check Status...");
     let status = npm1300.get_ldsw_status().await.unwrap();
